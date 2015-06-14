@@ -86,7 +86,7 @@ class ApiController(BaseController):
                 accelerometer_y=accelerometer_y,
                 tdr=tdr,
                 tilt=tilt,
-                update_time=datetime.utcnow()
+                update_time=datetime.datetime.utcnow()
             )
         else:
             node.data_json = kw
