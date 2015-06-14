@@ -4,9 +4,9 @@
 // use text boxes to resize in angular
 
 
-var app = angular.module('app', ['highcharts-ng']);
+var app = angular.module('app', ['highcharts-ng', 'ngToast']);
 
-app.controller('NodeCtrl', [ '$scope' , function( $scope ){
+app.controller('NodeCtrl', [ '$scope', 'ngToast', function($scope, ngToast){
   // (usually better to have the srv as intermediary)
 
     $scope.highchartsNG = {
@@ -26,16 +26,19 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
 
     $scope.host = $('#host_value').val();
     $scope.logo = $('#logo_value').val();
+    $scope.audio = $('#audio_value').val();
 
     var mapOptions = {
         zoom: 14,
         center: new google.maps.LatLng(45.055109, 7.701168),
-        mapTypeId: google.maps.MapTypeId.TERRAIN
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
+        disableDefaultUI: true
     }
 
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
     $scope.markers = [];
+
     $scope.markers_length = 0;
     var infoWindow = new google.maps.InfoWindow();
     var createMarker = function (info){
@@ -95,6 +98,7 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
   var first_launch = true;
   var eventSrc = new EventSource($scope.host);
 
+
   eventSrc.addEventListener('message',function(response){
       if(first_launch){
          angular.forEach(JSON.parse(response.data), function(value) {
@@ -137,6 +141,11 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                         value.styleIcon.set('color', 'FFC500');
                     }else if(value.status =='ALARMED'){
                         value.styleIcon.set('color', 'ff0000');
+                        ngToast.dismiss();
+                        ngToast.create({
+                          className: 'danger',
+                          content: resp_value.name + ' is ALARMED!'
+                        });
                     }
                     found = true;
                     value.acc_x = resp_value.accelerometer_x;
@@ -155,10 +164,11 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                                     '<div> Status: <b>' + value.status + '</b></div>' +
                                     '</div>';
                 }
-                  
+
                 if($scope.observed_marker!=undefined && value.title == $scope.observed_marker.title){
                     var seriesArray = $scope.highchartsNG.series;
-                    seriesArray[0].data = seriesArray[0].data.concat([Math.random() * 100])
+                    //console.log('data '+resp_value.temp);
+                    seriesArray[0].data = seriesArray[0].data.concat([resp_value.temp]);
                 }
               });
               if(!found){

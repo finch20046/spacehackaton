@@ -30,6 +30,7 @@ class Node(MappedClass):
     accelerometer_y = FieldProperty(s.Float)
     tdr = FieldProperty(s.Float)
     tilt = FieldProperty(s.Float)
+    temp = FieldProperty(s.Float)
 
     def to_json(self):
         return {

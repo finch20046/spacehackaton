@@ -25,6 +25,7 @@ __all__ = ['RootController']
 
 class ApiController(BaseController):
     def to_json(self, obj):
+        print "oggetto:", obj
         return {
             '_id': str(obj.get('_id')),
             'name': obj.get('name'),
@@ -36,7 +37,8 @@ class ApiController(BaseController):
             'accelerometer_x': obj.get('accelerometer_x'),
             'accelerometer_y': obj.get('accelerometer_y'),
             'tdr': obj.get('tdr'),
-            'tilt': obj.get('tilt')
+            'tilt': obj.get('tilt'),
+            'temp': obj.get('temp')
         }
 
     @expose(content_type='text/event-stream')
@@ -45,12 +47,6 @@ class ApiController(BaseController):
         response.headers["Access-Control-Allow-Origin"] = "*"
         """This method showcases how you can use the same controller for a data page and a display page"""
 
-        import socket
-        import sys
-
-        # Create a TCP/IP socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('localhost', 10000)
         def _generator():
             while True:
                 from pymongo import MongoClient
@@ -74,7 +70,7 @@ class ApiController(BaseController):
                                        default=json_util.default)
                 event = "data: %s\n\n" % json.loads(json_data)
                 sleep(1)
-                print "Nodes", event.replace("u'", "'").replace("'", "\"")
+                #print "Nodes", event.replace("u'", "'").replace("'", "\"")
                 client.close()
                 yield event.replace("u'", "'").replace("'", "\"").encode('utf-8')
 
@@ -88,15 +84,15 @@ class ApiController(BaseController):
     @expose('json')
     def get_node_data(self, name, lat, lng):
         node = Node.query.find({"name": name}).first()
-        print "Nodo:", node
+        #print "Nodo:", node
         return dict(node_data=node)
 
 
     @expose('json')
     def new_or_update_device(self, latitude, longitude, status, accelerometer_x, accelerometer_y, tdr, tilt, name,
-                             **kw):
+                             temperature, **kw):
         node = Node.query.find({"name": name}).first()
-
+        print "temperatura:", temperature
         if node is None:
             Node(
                 name=name,
@@ -108,7 +104,8 @@ class ApiController(BaseController):
                 accelerometer_y=float(accelerometer_y),
                 tdr=float(tdr),
                 tilt=float(tilt),
-                update_time=datetime.datetime.utcnow()
+                update_time=datetime.datetime.utcnow(),
+                temp=temperature
             )
         else:
             node.data_json = kw
@@ -120,6 +117,7 @@ class ApiController(BaseController):
             node.tdr = float(tdr)
             node.tilt = float(tilt)
             node.update_time = datetime.datetime.utcnow()
+            node.temp = temperature
 
         DBSession.flush()
 
