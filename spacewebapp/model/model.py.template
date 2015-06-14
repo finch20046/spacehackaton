@@ -1,0 +1,3 @@
+# -*- coding: utf-8 -*-
+"""{{target.capitalize()}} model module."""
+# Model Template is currently only available for SQLAlchemy
