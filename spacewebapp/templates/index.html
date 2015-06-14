@@ -23,6 +23,7 @@
 </style>
 </head>
 <body>
+<input id="host_value" type="hidden" value="${tg.url('/api/get_all_data_event', qualified=True)}"/>
 <div ng-app="app" ng-controller="NodeCtrl">
     <div id="map">
 

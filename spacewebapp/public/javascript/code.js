@@ -7,8 +7,9 @@
 var app = angular.module('app', []);
 
 app.controller('NodeCtrl', [ '$scope' , function( $scope ){
-
   // (usually better to have the srv as intermediary)
+
+    $scope.host = $('#host_value').val();
 
     var mapOptions = {
         zoom: 4,
@@ -53,7 +54,7 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
     }
 
   var first_launch = true;
-  var eventSrc = new EventSource('http://localhost:8080/api/get_all_data_event');
+  var eventSrc = new EventSource($scope.host);
 
   eventSrc.addEventListener('message',function(response){
       if(first_launch){
