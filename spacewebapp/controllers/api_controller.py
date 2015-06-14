@@ -105,7 +105,7 @@ class ApiController(BaseController):
                 tdr=float(tdr),
                 tilt=float(tilt),
                 update_time=datetime.datetime.utcnow(),
-                temp=temperature
+                temp=float(temperature)
             )
         else:
             node.data_json = kw
@@ -117,7 +117,7 @@ class ApiController(BaseController):
             node.tdr = float(tdr)
             node.tilt = float(tilt)
             node.update_time = datetime.datetime.utcnow()
-            node.temp = temperature
+            node.temp = float(temperature)
 
         DBSession.flush()
 
