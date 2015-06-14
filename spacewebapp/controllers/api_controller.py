@@ -44,8 +44,8 @@ class ApiController(BaseController):
         def _generator():
             while True:
                 from pymongo import MongoClient
-
-                client = MongoClient('mongodb://localhost:27017/')
+                from tg import config
+                client = MongoClient("%s%s" % (config.get('ming.url'), config.get('ming.db')))
                 db = client.spacehackaton
 
                 data_to_deactivate = db.node.find(
