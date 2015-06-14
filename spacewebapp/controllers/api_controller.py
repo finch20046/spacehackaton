@@ -68,29 +68,6 @@ class ApiController(BaseController):
         print "Nodo:", node
         return dict(node_data=node)
 
-    @expose('json')
-    def set_data(self, name, lat, lng, status, **kw):
-        node = Node.query.find({"name": name}).first()
-        if node is None:
-            node = Node(
-                name=name,
-                data_json=kw,
-                lat=float(lat),
-                lng=float(lng),
-                status=status
-            )
-            print "NODO CREATO: ", node
-        else:
-            node.data_json = kw
-            node.lat = float(lat)
-            node.lng = float(lng)
-            node.status = status
-            print "NODO AGGIORNATO: ", node
-
-        DBSession.flush()
-        return dict(
-            result='success'
-        )
 
     @expose('json')
     def new_or_update_device(self, latitude, longitude, status, accelerometer_x, accelerometer_y, tdr, tilt, name,

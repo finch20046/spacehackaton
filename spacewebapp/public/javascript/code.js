@@ -21,7 +21,6 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
     $scope.markers = [];
 
     var infoWindow = new google.maps.InfoWindow();
-
     var createMarker = function (info){
         var marker = new StyledMarker(
             {
@@ -51,17 +50,12 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
     $scope.openInfoWindow = function(e, selectedMarker){
         e.preventDefault();
         google.maps.event.trigger(selectedMarker, 'click');
-        console.log($scope.map.markers)
     }
 
   var first_launch = true;
   var eventSrc = new EventSource('http://localhost:8080/api/get_all_data_event');
 
   eventSrc.addEventListener('message',function(response){
-      //console.log(response.data);
-      //console.log(JSON.parse(response.data));
-      //console.log(JSON.parse(response.data));
-      console.log(response.data);
       if(first_launch){
          angular.forEach(JSON.parse(response.data), function(value) {
             createMarker(value);
@@ -76,6 +70,7 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
 
           */
           var resp_data = JSON.parse(response.data);
+
           angular.forEach($scope.markers, function(value) {
               var found = false;
               angular.forEach(resp_data, function(resp_value) {
@@ -111,11 +106,13 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                  createMarker(resp_value);
               }
           });
-          if(response.data.length == 0){
-              $scope.markers = [];
+          if(JSON.parse(response.data).length == 0){
+              angular.forEach($scope.markers, function(to_del_value) {
+                 to_del_value.setMap(null);
+                 $scope.markers.splice(to_del_value, 1);
+              });
           }
       }
-      console.log($scope.markers);
   });
 
   }
