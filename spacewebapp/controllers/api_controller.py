@@ -32,7 +32,9 @@ class ApiController(BaseController):
             'lat': str(obj.get('lat')),
             'lng': str(obj.get('lng')),
             'status': obj.get('status'),
-            'update_time': obj.get('update_time')
+            'update_time': obj.get('update_time'),
+            'accelerometer_x': obj.get('accelerometer_x'),
+            'accelerometer_y': obj.get('accelerometer_y')
         }
 
     @expose(content_type='text/event-stream')
@@ -47,7 +49,6 @@ class ApiController(BaseController):
                 from tg import config
                 client = MongoClient("%s%s" % (config.get('ming.url'), config.get('ming.db')))
                 db = client.spacehackaton
-
                 '''
                 data_to_deactivate = db.node.find(
                     {

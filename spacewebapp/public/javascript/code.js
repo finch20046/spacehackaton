@@ -10,10 +10,11 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
   // (usually better to have the srv as intermediary)
 
     $scope.host = $('#host_value').val();
+    $scope.logo = $('#logo_value').val();
 
     var mapOptions = {
-        zoom: 4,
-        center: new google.maps.LatLng(45.0000, 7.0000),
+        zoom: 14,
+        center: new google.maps.LatLng(45.055109, 7.701168),
         mapTypeId: google.maps.MapTypeId.TERRAIN
     }
 
@@ -29,16 +30,23 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                     StyledIconTypes.MARKER,
                     {
                         color:"C0C0B8",
-                        text:"I'm a marker!"
+                        text:""
                     }
                 ),
                 position: new google.maps.LatLng(info.lat, info.lng),
                 map:$scope.map,
                 title: info.name,
-                status:'active'
+                acc_x: info.accelerometer_x,
+                acc_y: info.accelerometer_y,
+                status: info.status
             }
         );
-        marker.content = '<div class="infoWindowContent">' + info.desc + '</div>';
+        marker.content = '<div class="infoWindowContent"> ' +
+                        "<img class='logo-class' src='"+ $scope.logo +"'/>" +
+                        '<div> DriftX: ' + marker.acc_x + '</div>' +
+                        '<div> DriftY: '+ marker.acc_y + '</div>' +
+                        '<div> Status: ' + marker.status + '</div>' +
+                        '</div>';
 
         google.maps.event.addListener(marker, 'click', function(){
             infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
@@ -100,6 +108,14 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                         value.styleIcon.set('color', 'ff0000');
                     }
                     found = true;
+                    value.acc_x = resp_value.accelerometer_x;
+                    value.acc_y = resp_value.accelerometer_y;
+                    marker.content = '<div class="infoWindowContent"> ' +
+                                    "<img class='logo-class' src='"+ $scope.logo +"'/>" +
+                                    '<div> DriftX: ' + marker.acc_x + '</div>' +
+                                    '<div> DriftY: '+ marker.acc_y + '</div>' +
+                                    '<div> Status: ' + marker.status + '</div>' +
+                                    '</div>';
                 }
               });
               if(!found){
@@ -111,6 +127,7 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                  to_del_value.styleIcon.set('color', 'C0C0B8');
               });
           }
+          console.log($scope.markers.length);
       }
   });
 

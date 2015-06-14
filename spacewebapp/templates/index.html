@@ -7,9 +7,13 @@
 <meta charset="${response.charset}" />
 <title>AngularJS example</title>
 <style>
+
     #map {
     height:420px;
-    width:600px;
+    margin-top:50px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
     }
     .infoWindowContent {
         font-size:  14px !important;
@@ -20,16 +24,22 @@
         margin-bottom:0;
         margin-top: 0;
     }
+
+    .logo-class{
+        width:40px;
+        height:40px;
+    }
 </style>
 </head>
 <body>
+<input id="logo_value" type="hidden" value="${tg.url('/img/asd.jpg', qualified=True)}"/>
 <input id="host_value" type="hidden" value="${tg.url('/api/get_all_data_event', qualified=True)}"/>
 <div ng-app="app" ng-controller="NodeCtrl">
     <div id="map">
 
     </div>
-    <div id="class" ng-repeat="marker in markers | orderBy : 'title'">
-         <a href="#" ng-click="openInfoWindow($$event, marker)">{{marker.title}}</a>
+    <div id="class" style="text-align: center; padding-top:20px;">
+         Numero di nodi nella rete : {{markers}}
     </div>
 </div>
 
