@@ -13,6 +13,10 @@
         font-family: 'RockFont'; /*a name to be used later*/
         src: url("${tg.url('/fonts/JFRocOut.ttf')}"); /*URL to font*/
     }
+    ul
+{
+    list-style-type: none;
+}
     #map {
     height:420px;
     margin-top:50px;
@@ -42,33 +46,58 @@
     }
 
     .Simulated{
-        color:red;
+        color:grey;
     }
 
     .Real{
-        color:green;
+        color:#00FF00;
     }
+
+    .RUNNING{
+        color:#00FF00;
+    }
+
+    .WARNING{
+        color:#FFC500;
+    }
+
+    .ALARMED{
+        color:#FF0000;
+    }
+    .ng-cloak { display:none; }
 </style>
 </head>
-<body>
+<body class="ng-cloak" ng-app="app" ng-controller="NodeCtrl">
 <h1 id="drift-header">The Drifting Genuflection</h1>
 <input id="audio_value" type="hidden" value="${tg.url('/mp3/alert.mp3', qualified=True)}"/>
 <input id="logo_value" type="hidden" value="${tg.url('/img/asd.jpg', qualified=True)}"/>
 <input id="host_value" type="hidden" value="${tg.url('/api/get_all_data_event', qualified=True)}"/>
-<div ng-app="app" ng-controller="NodeCtrl">
+<div>
     <toast></toast>
 
     <div style="width:100%;">
-        <div id="map" style="width:70%;float:left;">
+        <div id="map" style="width:65%;float:left;margin-left: 5%;">
 
         </div>
-        <highchart id='chart1' config='highchartsNG' style="width:30%;float:right;margin-top: 50px;"></highchart>
+        <highchart id='chart1' config='highchartsNG' style="width:25%;float:right;margin-top: 50px;margin-right: 5%;"></highchart>
     </div>
 
-    <div id="class" style="text-align: center; margin-top: 50px;">
+    <div id="class" style="text-align: center; margin-top: 50px; width: 100%;;">
          Numero di nodi nella rete : {{markers_length}}
     </div>
-
+</div>
+<div style="width: 100%; text-align: center; padding-top:40px;">
+    <ul>
+       <li>Link repository WebApplication:
+           <a href="https://github.com/finch20046/spacehackaton" target="_blank">The Drifting Genuflection</a>
+       </li>
+       <li>Link repository Sensor Deamn:
+           <a href="https://github.com/haberdasherv/Intrepid_sensor_daemon" target="_blank">Space Deamon</a>
+       </li>
+       <li>Link repository Node Emulator and Network Interface:
+           <a href="https://github.com/GitHK/spacehack" target="_blank">BotNet</a>
+       </li>
+    </ul>
 </div>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"/>

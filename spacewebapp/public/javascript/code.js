@@ -29,8 +29,8 @@ app.controller('NodeCtrl', [ '$scope', 'ngToast', function($scope, ngToast){
     $scope.audio = $('#audio_value').val();
 
     var mapOptions = {
-        zoom: 14,
-        center: new google.maps.LatLng(45.055109, 7.701168),
+        zoom: 15,
+        center: new google.maps.LatLng(45.055109, 7.705168),
         mapTypeId: google.maps.MapTypeId.TERRAIN,
         disableDefaultUI: true
     }
@@ -58,7 +58,8 @@ app.controller('NodeCtrl', [ '$scope', 'ngToast', function($scope, ngToast){
                 acc_y: info.accelerometer_y,
                 status: info.status,
                 tdr:info.tdr,
-                tilt:info.tilt
+                tilt:info.tilt,
+                temp:info.temp
             }
         );
 
@@ -73,7 +74,7 @@ app.controller('NodeCtrl', [ '$scope', 'ngToast', function($scope, ngToast){
                         '<div> DriftY: <b>'+ marker.acc_y + '</b></div>' +
                         '<div> Tdr: <b>'+ marker.tdr + '</b></div>' +
                         '<div> tilt: <b>'+ marker.tilt + '</b></div>' +
-                        '<div> Status: <b>' + marker.status + '</b></div>' +
+                        "<div> Status: <b class='"+marker.status+"'>" + marker.status + '</b></div>' +
                         '</div>';
 
         google.maps.event.addListener(marker, 'click', function(){
@@ -130,6 +131,17 @@ app.controller('NodeCtrl', [ '$scope', 'ngToast', function($scope, ngToast){
           });
           angular.forEach(resp_data, function(resp_value) {
               var found = false;
+              if($scope.observed_marker!=undefined){
+                    if(resp_value.name == $scope.observed_marker.title){
+                        var seriesArray = $scope.highchartsNG.series;
+                        console.log(resp_value.name + ", " + resp_value.temp);
+                        if(resp_value.name == 'Intrepid'){
+                            seriesArray[0].data = seriesArray[0].data.concat([resp_value.temp]);
+                        }else{
+                            seriesArray[0].data = seriesArray[0].data.concat([Math.random() * 100]);
+                        }
+                    }
+              }
               angular.forEach($scope.markers, function(value) {
                 if(value.title == resp_value.name){
                     value.status = resp_value.status;
@@ -161,14 +173,8 @@ app.controller('NodeCtrl', [ '$scope', 'ngToast', function($scope, ngToast){
                                     '<div> DriftY: <b>'+ value.acc_y + '</b></div>' +
                                     '<div> Tdr: <b>' + value.tdr + '</b></div>' +
                                     '<div> Tilt: <b>' + value.tilt + '</b></div>' +
-                                    '<div> Status: <b>' + value.status + '</b></div>' +
+                                    "<div> Status: <b class='"+value.status+"'>" + value.status + '</b></div>' +
                                     '</div>';
-                }
-
-                if($scope.observed_marker!=undefined && value.title == $scope.observed_marker.title){
-                    var seriesArray = $scope.highchartsNG.series;
-                    //console.log('data '+resp_value.temp);
-                    seriesArray[0].data = seriesArray[0].data.concat([resp_value.temp]);
                 }
               });
               if(!found){
