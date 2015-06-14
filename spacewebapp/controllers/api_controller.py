@@ -82,21 +82,21 @@ class ApiController(BaseController):
                 lat=float(latitude),
                 lng=float(longitude),
                 status=status,
-                accelerometer_x=accelerometer_x,
-                accelerometer_y=accelerometer_y,
-                tdr=tdr,
-                tilt=tilt,
+                accelerometer_x=float(accelerometer_x),
+                accelerometer_y=float(accelerometer_y),
+                tdr=float(tdr),
+                tilt=float(tilt),
                 update_time=datetime.datetime.utcnow()
             )
         else:
             node.data_json = kw
             node.lat = float(latitude)
             node.lng = float(longitude)
-            node.status = status
-            node.accelerometer_x = accelerometer_x
-            node.accelerometer_y = accelerometer_y
-            node.tdr = tdr
-            node.tilt = tilt
+            node.status = float(status)
+            node.accelerometer_x = float(accelerometer_x)
+            node.accelerometer_y = float(accelerometer_y)
+            node.tdr = float(tdr)
+            node.tilt = float(tilt)
             node.update_time = datetime.datetime.utcnow()
 
         DBSession.flush()
