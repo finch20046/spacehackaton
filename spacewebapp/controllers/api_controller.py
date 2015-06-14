@@ -34,7 +34,9 @@ class ApiController(BaseController):
             'status': obj.get('status'),
             'update_time': obj.get('update_time'),
             'accelerometer_x': obj.get('accelerometer_x'),
-            'accelerometer_y': obj.get('accelerometer_y')
+            'accelerometer_y': obj.get('accelerometer_y'),
+            'tdr': obj.get('tdr'),
+            'tilt': obj.get('tilt')
         }
 
     @expose(content_type='text/event-stream')
@@ -43,6 +45,12 @@ class ApiController(BaseController):
         response.headers["Access-Control-Allow-Origin"] = "*"
         """This method showcases how you can use the same controller for a data page and a display page"""
 
+        import socket
+        import sys
+
+        # Create a TCP/IP socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = ('localhost', 10000)
         def _generator():
             while True:
                 from pymongo import MongoClient

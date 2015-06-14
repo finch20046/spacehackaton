@@ -4,10 +4,25 @@
 // use text boxes to resize in angular
 
 
-var app = angular.module('app', []);
+var app = angular.module('app', ['highcharts-ng']);
 
 app.controller('NodeCtrl', [ '$scope' , function( $scope ){
   // (usually better to have the srv as intermediary)
+
+    $scope.highchartsNG = {
+        options: {
+            chart: {
+                type: 'line'
+            }
+        },
+        series: [{
+            data: [0]
+        }],
+        title: {
+            text: $scope.observed_marker != undefined ? $scope.observed_marker.title : ""
+        },
+        loading: false
+    }
 
     $scope.host = $('#host_value').val();
     $scope.logo = $('#logo_value').val();
@@ -21,7 +36,7 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
     $scope.markers = [];
-
+    $scope.markers_length = 0;
     var infoWindow = new google.maps.InfoWindow();
     var createMarker = function (info){
         var marker = new StyledMarker(
@@ -38,19 +53,35 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                 title: info.name,
                 acc_x: info.accelerometer_x,
                 acc_y: info.accelerometer_y,
-                status: info.status
+                status: info.status,
+                tdr:info.tdr,
+                tilt:info.tilt
             }
         );
+
+        var platform = 'Simulated';
+        if(marker.title == 'Intrepid'){
+            platform = 'Real';
+        }
         marker.content = '<div class="infoWindowContent"> ' +
                         "<img class='logo-class' src='"+ $scope.logo +"'/>" +
-                        '<div> DriftX: ' + marker.acc_x + '</div>' +
-                        '<div> DriftY: '+ marker.acc_y + '</div>' +
-                        '<div> Status: ' + marker.status + '</div>' +
+                        "<div> Platform: <b class='"+platform+"'>" + platform + '</b></div>' +
+                        '<div> DriftX: <b>' + marker.acc_x + '</b></div>' +
+                        '<div> DriftY: <b>'+ marker.acc_y + '</b></div>' +
+                        '<div> Tdr: <b>'+ marker.tdr + '</b></div>' +
+                        '<div> tilt: <b>'+ marker.tilt + '</b></div>' +
+                        '<div> Status: <b>' + marker.status + '</b></div>' +
                         '</div>';
 
         google.maps.event.addListener(marker, 'click', function(){
+            $scope.highchartsNG.title = {
+                        text: " Temperature per il nodo:" + marker.title
+                    };
             infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
             infoWindow.open($scope.map, marker);
+            var seriesArray = $scope.highchartsNG.series;
+            seriesArray[0].data = [];
+            $scope.observed_marker = marker;
         });
 
         $scope.markers.push(marker);
@@ -110,12 +141,24 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                     found = true;
                     value.acc_x = resp_value.accelerometer_x;
                     value.acc_y = resp_value.accelerometer_y;
-                    marker.content = '<div class="infoWindowContent"> ' +
+                    var platform = 'Simulated';
+                    if(value.title == 'Intrepid'){
+                        platform = 'Real';
+                    }
+                    value.content = '<div class="infoWindowContent"> ' +
                                     "<img class='logo-class' src='"+ $scope.logo +"'/>" +
-                                    '<div> DriftX: ' + marker.acc_x + '</div>' +
-                                    '<div> DriftY: '+ marker.acc_y + '</div>' +
-                                    '<div> Status: ' + marker.status + '</div>' +
+                                    "<div> Platform: <b class='"+platform+"'>" + platform + '</b></div>' +
+                                    '<div> DriftX: <b>' + value.acc_x + '</b></div>' +
+                                    '<div> DriftY: <b>'+ value.acc_y + '</b></div>' +
+                                    '<div> Tdr: <b>' + value.tdr + '</b></div>' +
+                                    '<div> Tilt: <b>' + value.tilt + '</b></div>' +
+                                    '<div> Status: <b>' + value.status + '</b></div>' +
                                     '</div>';
+                }
+                  
+                if($scope.observed_marker!=undefined && value.title == $scope.observed_marker.title){
+                    var seriesArray = $scope.highchartsNG.series;
+                    seriesArray[0].data = seriesArray[0].data.concat([Math.random() * 100])
                 }
               });
               if(!found){
@@ -127,7 +170,8 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                  to_del_value.styleIcon.set('color', 'C0C0B8');
               });
           }
-          console.log($scope.markers.length);
+          $scope.markers_length = $scope.markers.length;
+          $scope.$apply();
       }
   });
 
