@@ -68,17 +68,19 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
               angular.forEach(resp_data, function(resp_value) {
                 if(value.title == resp_value.name){
                     value.status = resp_value.status;
-                    if(value.status == 'active'){
+                    if(value.status == 'RUNNING'){
                         value.styleIcon.set('color', '00ff00');
-                    }else if(value.status =='inactive'){
+                    }else if(value.status =='INACTIVE'){
+                        value.styleIcon.set('color', 'C0C0B8');
+                    }else if(value.status =='WARNING'){
+                        value.styleIcon.set('color', 'FFC500');
+                    }else if(value.status =='ALARMED'){
                         value.styleIcon.set('color', 'ff0000');
                     }
                     found = true;
                 }
               });
               if(!found){
-                 //value.setMap(null);
-                 //$scope.markers.splice(value, 1);
                  value.styleIcon.set('color', 'C0C0B8');
               }
           });
@@ -87,9 +89,13 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
               angular.forEach($scope.markers, function(value) {
                 if(value.title == resp_value.name){
                     value.status = resp_value.status;
-                    if(value.status == 'active'){
+                    if(value.status == 'RUNNING'){
                         value.styleIcon.set('color', '00ff00');
-                    }else if(value.status =='inactive'){
+                    }else if(value.status =='INACTIVE'){
+                        value.styleIcon.set('color', 'C0C0B8');
+                    }else if(value.status =='WARNING'){
+                        value.styleIcon.set('color', 'FFC500');
+                    }else if(value.status =='ALARMED'){
                         value.styleIcon.set('color', 'ff0000');
                     }
                     found = true;
@@ -102,9 +108,6 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
           if(JSON.parse(response.data).length == 0){
               angular.forEach($scope.markers, function(to_del_value) {
                  to_del_value.styleIcon.set('color', 'C0C0B8');
-
-                 //to_del_value.setMap(null);
-                 //$scope.markers.splice(to_del_value, 1);
               });
           }
       }

@@ -25,14 +25,14 @@ __all__ = ['RootController']
 
 class ApiController(BaseController):
     def to_json(self, obj):
-        print "oggetto:", obj.get('_id')
         return {
             '_id': str(obj.get('_id')),
             'name': obj.get('name'),
             'data_json': obj.get('data_json'),
             'lat': str(obj.get('lat')),
             'lng': str(obj.get('lng')),
-            'status': obj.get('status')
+            'status': obj.get('status'),
+            'update_time': obj.get('update_time')
         }
 
     @expose(content_type='text/event-stream')
@@ -47,6 +47,18 @@ class ApiController(BaseController):
 
                 client = MongoClient('mongodb://localhost:27017/')
                 db = client.spacehackaton
+
+                data_to_deactivate = db.node.find(
+                    {
+                        'update_time': {
+                            '$lt': datetime.datetime.utcnow()-datetime.timedelta(seconds=10)
+                        }
+                    }
+                )
+
+                for item_to_deactivate in data_to_deactivate:
+                    db.node.update({'name': item_to_deactivate.get('name')}, {'$set': {'status': 'INACTIVE'}})
+
                 data_to_return = db.node.find()
                 json_data = json.dumps([self.to_json(x) for x in data_to_return], sort_keys=True, indent=4,
                                        default=json_util.default)
