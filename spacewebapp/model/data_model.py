@@ -25,6 +25,11 @@ class Node(MappedClass):
     lng = FieldProperty(s.Float)
     status = FieldProperty(s.String, if_missing='active')
 
+    accelerometer_x = FieldProperty(s.Float)
+    accelerometer_y = FieldProperty(s.Float)
+    tdr = FieldProperty(s.Float)
+    tilt = FieldProperty(s.Float)
+
     def to_json(self):
         return {
             '_id': str(self._id),

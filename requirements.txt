@@ -50,4 +50,4 @@ WebTest==1.4.3
 Werkzeug==0.9.6
 zope.interface==4.1.2
 zope.sqlalchemy==0.7.6
-waitress
+gevent

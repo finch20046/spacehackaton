@@ -23,13 +23,12 @@ __all__ = ['RootController']
 
 
 class ApiController(BaseController):
-
     def to_json(self, obj):
-        print "oggetto:",obj.get('_id')
+        print "oggetto:", obj.get('_id')
         return {
             '_id': str(obj.get('_id')),
             'name': obj.get('name'),
-            'data_json' : obj.get('data_json'),
+            'data_json': obj.get('data_json'),
             'lat': str(obj.get('lat')),
             'lng': str(obj.get('lng')),
             'status': obj.get('status')
@@ -40,18 +39,22 @@ class ApiController(BaseController):
 
         response.headers["Access-Control-Allow-Origin"] = "*"
         """This method showcases how you can use the same controller for a data page and a display page"""
+
         def _generator():
             while True:
                 from pymongo import MongoClient
+
                 client = MongoClient('mongodb://localhost:27017/')
                 db = client.spacehackaton
                 data_to_return = db.node.find()
-                json_data = json.dumps([self.to_json(x) for x in data_to_return], sort_keys=True, indent=4, default=json_util.default)
+                json_data = json.dumps([self.to_json(x) for x in data_to_return], sort_keys=True, indent=4,
+                                       default=json_util.default)
                 event = "data: %s\n\n" % json.loads(json_data)
                 sleep(1)
                 print "Nodes", event.replace("u'", "'").replace("'", "\"")
                 client.close()
                 yield event.replace("u'", "'").replace("'", "\"").encode('utf-8')
+
         return _generator()
 
     @expose('json')
@@ -88,3 +91,42 @@ class ApiController(BaseController):
         return dict(
             result='success'
         )
+
+    @expose('json')
+    def new_or_update_device(self, latitude, longitude, status, accelerometer_x, accelerometer_y, tdr, tilt, name,
+                             **kw):
+        node = Node.query.find({"name": name}).first()
+        if node is None:
+            Node(
+                name=name,
+                data_json=kw,
+                lat=float(latitude),
+                lng=float(longitude),
+                status=status,
+                accelerometer_x=accelerometer_x,
+                accelerometer_y=accelerometer_y,
+                tdr=tdr,
+                tilt=tilt
+            )
+        else:
+            node.data_json = kw
+            node.lat = float(latitude)
+            node.lng = float(longitude)
+            node.status = status
+            node.accelerometer_x = accelerometer_x,
+            node.accelerometer_y = accelerometer_y,
+            node.tdr = tdr,
+            node.tilt = tilt
+
+        DBSession.flush()
+
+        return dict(result='success')
+
+
+    @expose('json')
+    def update_status(self, name, status, **kw):
+        node = Node.query.find({"name": name}).first()
+        if node is None:
+            return dict(result='error')
+        node.status = status
+        return dict(result='success')
