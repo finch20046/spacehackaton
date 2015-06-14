@@ -48,6 +48,7 @@ class ApiController(BaseController):
                 client = MongoClient("%s%s" % (config.get('ming.url'), config.get('ming.db')))
                 db = client.spacehackaton
 
+                '''
                 data_to_deactivate = db.node.find(
                     {
                         'update_time': {
@@ -58,7 +59,7 @@ class ApiController(BaseController):
 
                 for item_to_deactivate in data_to_deactivate:
                     db.node.update({'name': item_to_deactivate.get('name')}, {'$set': {'status': 'INACTIVE'}})
-
+                '''
                 data_to_return = db.node.find()
                 json_data = json.dumps([self.to_json(x) for x in data_to_return], sort_keys=True, indent=4,
                                        default=json_util.default)
