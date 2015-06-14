@@ -97,7 +97,7 @@ class ApiController(BaseController):
             node.accelerometer_y = accelerometer_y
             node.tdr = tdr
             node.tilt = tilt
-            node.update_time = datetime.utcnow()
+            node.update_time = datetime.datetime.utcnow()
 
         DBSession.flush()
 

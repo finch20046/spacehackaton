@@ -25,7 +25,7 @@ class Node(MappedClass):
     lat = FieldProperty(s.Float)
     lng = FieldProperty(s.Float)
     status = FieldProperty(s.String, if_missing='active')
-    update_time = FieldProperty(s.DateTime, if_missing=datetime.utcnow)
+    update_time = FieldProperty(s.DateTime, if_missing=datetime.datetime.utcnow)
     accelerometer_x = FieldProperty(s.Float)
     accelerometer_y = FieldProperty(s.Float)
     tdr = FieldProperty(s.Float)
