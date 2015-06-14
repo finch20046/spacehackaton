@@ -27,7 +27,7 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                 styleIcon:new StyledIcon(
                     StyledIconTypes.MARKER,
                     {
-                        color:"00ff00",
+                        color:"C0C0B8",
                         text:"I'm a marker!"
                     }
                 ),
@@ -62,15 +62,7 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
          });
          first_launch = false;
       }else{
-          /*
-
-            value.setMap(null);
-            $scope.markers.splice(value, 1);
-
-
-          */
           var resp_data = JSON.parse(response.data);
-
           angular.forEach($scope.markers, function(value) {
               var found = false;
               angular.forEach(resp_data, function(resp_value) {
@@ -85,8 +77,9 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
                 }
               });
               if(!found){
-                 value.setMap(null);
-                 $scope.markers.splice(value, 1);
+                 //value.setMap(null);
+                 //$scope.markers.splice(value, 1);
+                 value.styleIcon.set('color', 'C0C0B8');
               }
           });
           angular.forEach(resp_data, function(resp_value) {
@@ -108,8 +101,10 @@ app.controller('NodeCtrl', [ '$scope' , function( $scope ){
           });
           if(JSON.parse(response.data).length == 0){
               angular.forEach($scope.markers, function(to_del_value) {
-                 to_del_value.setMap(null);
-                 $scope.markers.splice(to_del_value, 1);
+                 to_del_value.styleIcon.set('color', 'C0C0B8');
+
+                 //to_del_value.setMap(null);
+                 //$scope.markers.splice(to_del_value, 1);
               });
           }
       }

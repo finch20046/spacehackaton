@@ -4,6 +4,7 @@
 import json
 from time import sleep
 from bson import json_util, ObjectId
+import datetime
 
 from tg import expose, flash, require, url, lurl, response
 from tg import request, redirect, tmpl_context
@@ -73,6 +74,7 @@ class ApiController(BaseController):
     def new_or_update_device(self, latitude, longitude, status, accelerometer_x, accelerometer_y, tdr, tilt, name,
                              **kw):
         node = Node.query.find({"name": name}).first()
+
         if node is None:
             Node(
                 name=name,
@@ -83,17 +85,19 @@ class ApiController(BaseController):
                 accelerometer_x=accelerometer_x,
                 accelerometer_y=accelerometer_y,
                 tdr=tdr,
-                tilt=tilt
+                tilt=tilt,
+                update_time=datetime.utcnow()
             )
         else:
             node.data_json = kw
             node.lat = float(latitude)
             node.lng = float(longitude)
             node.status = status
-            node.accelerometer_x = accelerometer_x,
-            node.accelerometer_y = accelerometer_y,
-            node.tdr = tdr,
+            node.accelerometer_x = accelerometer_x
+            node.accelerometer_y = accelerometer_y
+            node.tdr = tdr
             node.tilt = tilt
+            node.update_time = datetime.utcnow()
 
         DBSession.flush()
 

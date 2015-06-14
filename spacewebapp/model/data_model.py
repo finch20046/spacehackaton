@@ -1,3 +1,4 @@
+import datetime
 from ming.odm import FieldProperty
 from ming.odm.declarative import MappedClass
 from ming import schema as s
@@ -24,7 +25,7 @@ class Node(MappedClass):
     lat = FieldProperty(s.Float)
     lng = FieldProperty(s.Float)
     status = FieldProperty(s.String, if_missing='active')
-
+    update_time = FieldProperty(s.DateTime, if_missing=datetime.utcnow)
     accelerometer_x = FieldProperty(s.Float)
     accelerometer_y = FieldProperty(s.Float)
     tdr = FieldProperty(s.Float)
