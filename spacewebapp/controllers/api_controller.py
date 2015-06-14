@@ -92,7 +92,7 @@ class ApiController(BaseController):
             node.data_json = kw
             node.lat = float(latitude)
             node.lng = float(longitude)
-            node.status = float(status)
+            node.status = status
             node.accelerometer_x = float(accelerometer_x)
             node.accelerometer_y = float(accelerometer_y)
             node.tdr = float(tdr)
